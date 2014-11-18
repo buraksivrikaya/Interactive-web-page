@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+
+
+
+
+<?php
+	$con=mysqli_connect("localhost","root","","blog");
+?>
+<html>
+	<title>BLOG</title>
+	<head>
+		<meta name="viewport" content="width=device-width" />
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/style.css" type="text/css">
+	
+	</head>
+	
+
+	<body>
+		<div class="page">
+			<!--Logo&title-->
+			<div class="header">
+				<img class="logo" src="images/logo.png" alt="LOGO" height="90" width="90">
+				<div class="headercont"> ANASAYFA ANASAYFA ANASAYFA </div>
+			</div>
+		
+			<!--Navigation-->
+		
+			<ul class="navigation">
+				<li><a href="index.html">anasayfa</a></li>
+				<li><a href="catagories.html">arşiv</a></li>
+				<li><a href="about.html">hakkımızda</a></li>
+				<li><a href="links.html">linkler</a></li>
+			</ul> 
+		<!--Content-->
+				<?php
+					$sql= "select * from post where id in (select max(id) from post);";
+					$result=mysqli_query($con,$sql);
+					while($row = mysqli_fetch_array($result)){
+						$title = $row['title'];
+						$content = $row['content'];
+						$catagory = $row['catagory_id'];
+						$imagename = $row['imagename'];
+					}
+				?>
+			<div class="content">
+				<img src="images/<?php echo $imagename; ?>" alt="CNTPHT" height="90" width="90">
+				<h2><?php echo $title?></h2>
+				<p>
+					
+					<?php echo $content;?>
+				</p>
+				<div class="clearfix"></div>
+			</div>
+		<!--old contents-->
+		<p><br>Son Yazılanlar:<HR></p>
+		<!--old4-->
+			<div id="ex5">
+			<ul class="recentposts">
+				
+				<?php
+					$sql= "select * from post where id> (select max(id)- 7 from post) and id!=(select max(id) from post) order by id desc;";
+					$result=mysqli_query($con,$sql);
+					while($row = mysqli_fetch_array($result)){
+						$title = $row['title'];
+						$content = $row['content'];
+						$imagename = $row['imagename'];
+						if(strlen($content)>250){
+							$content = substr($content, 0, 250)."...";}
+				echo 
+				"<a href=\"link\">
+				<li>
+					<img src=\"images/$imagename\" alt=\"CNTPHT\" height=\"90\" width=\"90\">
+					<p1> $title </p1>
+					<p>
+					
+						$content
+					
+					</p>
+				</li></a>"; }?>
+				
+				
+				<div class="clearfix"></div>
+			</ul>
+		
+		</div>
+		<!--footer-->
+		<div class="footer"><hr></div>
+		</div>
+	</body>
+
+
+	
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+
+
+<?php
+	$con=mysqli_connect("localhost","root","","blog");
+?>
+
+<script src="jquery.min.js"></script>
+
+<html>
+	<title>BLOG</title>
+	<head>
+		<meta name="viewport" content="width=device-width" />
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/style.css" type="text/css">
+		
+	</head>
+	
+
+	<body>
+		<div class="page">
+			<!--Logo&title-->
+			<div class="header">
+				<img class="logo" src="images/logo.png" alt="LOGO" height="90" width="90">
+				<div class="headercont"> ANASAYFA ANASAYFA ANASAYFA </div>
+			</div>
+		
+			<!--Navigation-->
+		
+			<ul id="navigation" class="navigation">
+				<li><a href="index.html">anasayfa</a></li>
+				<li><a href="catagories.html">arşiv</a></li>
+				<li><a href="about.html">hakkımızda</a></li>
+				<li><a href="links.html">linkler</a></li>
+			</ul> 
+		<!--Content-->
+				<?php
+					$sql= "select * from post where id in (select max(id) from post);";
+					$result=mysqli_query($con,$sql);
+					while($row = mysqli_fetch_array($result)){
+						$title = $row['title'];
+						$content = $row['content'];
+						$catagory = $row['catagory_id'];
+						$imagename = $row['imagename'];
+					}
+				?>
+			<div id="content" class="content">
+				<img id="contentimage" src="images/<?php echo $imagename; ?>" alt="CNTPHT" height="90" width="90">
+				<h2><?php echo $title?></h2>
+				<p>
+					
+					<?php echo $content;?>
+				</p>
+				<div class="clearfix"></div>
+			</div>
+		<!--old contents-->
+		<p><br>Son Yazılanlar:<HR></p>
+		<!--old4-->
+			<div id="ex5">
+			<ul class="recentposts">
+				
+				<?php
+					$sql= "select * from post where id> (select max(id)- 7 from post) and id!=(select max(id) from post) order by id desc;";
+					$result=mysqli_query($con,$sql);
+					$nScCounter = 1;
+					while($row = mysqli_fetch_array($result)){
+						$title = $row['title'];
+						$content = $row['content'];
+						$imagename = $row['imagename'];
+						/*if(strlen($content)>250){
+							$content = substr($content, 0, 250)."...";}*/
+				echo 
+				"
+					<div id=\"subcontent_" .  $nScCounter . "\" class=\"subcontent\"> 
+					
+					<li>
+						<img src=\"images/$imagename\" alt=\"CNTPHT\" height=\"90\" width=\"90\">
+						<p1> $title </p1>
+						<p>
+						
+							$content
+						
+						</p>
+					</li>
+					</div>
+					"; 
+					$nScCounter++;
+					}?>
+				
+				
+				<div class="clearfix"></div>
+			</ul>
+		
+		</div>
+		<!--footer-->
+		<div class="footer"><hr></div>
+		</div>
+		
+		
+		<script type="text/javascript">
+			$('.subcontent:not(#ancherComplaint)').click(
+				function () {
+					var img=document.getElementById("content").getElementsByTagName("img")[0].src ;
+					var title=document.getElementById("content").getElementsByTagName("h2")[0].innerHTML;
+					var text=document.getElementById("content").getElementsByTagName("p")[0].innerHTML;
+					//image
+					document.getElementById("content").getElementsByTagName("img")[0].src = document.getElementById(this.id).getElementsByTagName('img')[0].src;
+					//title
+					document.getElementById("content").getElementsByTagName("h2")[0].innerHTML = document.getElementById(this.id).getElementsByTagName('p1')[0].innerHTML;
+					//text
+					document.getElementById("content").getElementsByTagName("p")[0].innerHTML = document.getElementById(this.id).getElementsByTagName('p')[0].innerHTML;
+					
+					//sub
+					document.getElementById(this.id).getElementsByTagName('img')[0].src=img;
+					document.getElementById(this.id).getElementsByTagName('p1')[0].innerHTML=title;
+					document.getElementById(this.id).getElementsByTagName('p')[0].innerHTML=text;
+				});
+		</script>
+		
+		
+	</body>
+
+
+	
+</html>
